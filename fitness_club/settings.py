@@ -54,16 +54,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fitness_club.wsgi.application'
 
+# ========== ИСПРАВЛЕНО: ИСПОЛЬЗУЕМ SQLite ==========
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'fitness_club_db',
-        'USER': 'postgres',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+# =================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
