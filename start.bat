@@ -1,5 +1,5 @@
 @echo off
-cd /d C:\Users\user\Desktop\ВКР\fitness-club-django
+cd /d "C:\Users\user\Desktop\ВКР\fitness-club-django"
 call venv\Scripts\activate.bat
-start python -3.12 manage.py runserver
-exit
+python -3.12 manage.py runserver
+pause
