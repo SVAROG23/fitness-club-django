@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Фиксация результатов тренировки{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h3>Фиксация результатов тренировки</h3>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info">
+            <strong>Тренировка:</strong> {{ workout.name }}<br>
+            <strong>Дата:</strong> {{ workout.workout_date }}<br>
+            <strong>Клиент:</strong> {{ workout.program.client.user.get_full_name }}
+        </div>
+        
+        {% for we in exercises %}
+        <div class="card mb-3">
+            <div class="card-header">
+                <strong>{{ we.exercise.name }}</strong>
+                <span class="badge bg-secondary">{{ we.sets_planned }} подходов × {{ we.reps_planned }} повторений</span>
+            </div>
+            <div class="card-body">
+                {% for set in we.sets.all %}
+                <div class="row mb-2">
+                    <div class="col-md-2">Подход {{ set.set_number }}</div>
+                    <div class="col-md-3"><input type="number" class="form-control" placeholder="Вес (кг)"></div>
+                    <div class="col-md-3"><input type="number" class="form-control" placeholder="Повторения"></div>
+                    <div class="col-md-2"><button class="btn btn-success btn-sm">✓ Сохранить</button></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <button class="btn btn-primary w-100">ЗАВЕРШИТЬ ТРЕНИРОВКУ</button>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-danger w-100 dropdown-toggle">ПРОБЛЕМА ▼</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
