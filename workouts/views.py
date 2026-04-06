@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets
-from .models import Workout, WorkoutProgram, Exercise, Set, WorkoutExercise
+from .models import Workout, WorkoutProgram, Exercise
 from .serializers import WorkoutSerializer, WorkoutProgramSerializer, ExerciseSerializer
 
 class WorkoutProgramViewSet(viewsets.ModelViewSet):
