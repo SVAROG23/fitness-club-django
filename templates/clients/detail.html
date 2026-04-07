@@ -8,21 +8,8 @@
     <div id="client-info"></div>
 </div>
 
-<div class="card">
-    <h2 class="card-title">📏 Антропометрия</h2>
-    <canvas id="anthropometryChart" width="400" height="200"></canvas>
-    <div id="anthropometry-list"></div>
-</div>
-
-<div class="card">
-    <h2 class="card-title">💪 Программы тренировок</h2>
-    <div id="programs-list"></div>
-</div>
-
 <script>
     const clientId = window.location.pathname.split('/').pop();
-    
-    // Загрузка данных клиента
     api.getClientProfile(clientId).then(client => {
         const info = document.getElementById('client-info');
         info.innerHTML = `
@@ -31,23 +18,6 @@
             <p><strong>Цели:</strong> ${client.goals || '-'}</p>
             <p><strong>Мед. ограничения:</strong> ${client.medical_restrictions || '-'}</p>
         `;
-    });
-    
-    // Загрузка программ тренировок
-    api.getPrograms().then(programs => {
-        const container = document.getElementById('programs-list');
-        const clientPrograms = programs.filter(p => p.client === clientId);
-        if (clientPrograms.length === 0) {
-            container.innerHTML = '<p>Нет активных программ</p>';
-            return;
-        }
-        container.innerHTML = clientPrograms.map(p => `
-            <div style="border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 8px;">
-                <h3>${p.name}</h3>
-                <p>${p.description || ''}</p>
-                <a href="/workouts/program/${p.id}/">Подробнее</a>
-            </div>
-        `).join('');
     });
 </script>
 {% endblock %}
