@@ -1,28 +1,53 @@
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from rest_framework import viewsets
-from .models import Workout, WorkoutProgram, Exercise
-from .serializers import WorkoutSerializer, WorkoutProgramSerializer, ExerciseSerializer
+from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from .models import MuscleGroup, Exercise, WorkoutProgram, Workout, WorkoutExercise, SetResult
+from .serializers import MuscleGroupSerializer, ExerciseSerializer, WorkoutProgramSerializer, WorkoutSerializer, WorkoutExerciseSerializer, SetResultSerializer
 
-class WorkoutProgramViewSet(viewsets.ModelViewSet):
-    queryset = WorkoutProgram.objects.all()
-    serializer_class = WorkoutProgramSerializer
-
-class WorkoutViewSet(viewsets.ModelViewSet):
-    queryset = Workout.objects.all()
-    serializer_class = WorkoutSerializer
+class MuscleGroupViewSet(viewsets.ModelViewSet):
+    queryset = MuscleGroup.objects.all()
+    serializer_class = MuscleGroupSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class ExerciseViewSet(viewsets.ModelViewSet):
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-@login_required
-def workout_fix_view(request, workout_id):
-    workout = get_object_or_404(Workout, id=workout_id)
-    workout_exercises = workout.exercises.all().order_by('order_index')
+class WorkoutProgramViewSet(viewsets.ModelViewSet):
+    queryset = WorkoutProgram.objects.all()
+    serializer_class = WorkoutProgramSerializer
+    permission_classes = [permissions.IsAuthenticated]
     
-    context = {
-        'workout': workout,
-        'exercises': workout_exercises,
-    }
-    return render(request, 'workouts/workout_fix.html', context)
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'trainer':
+            return WorkoutProgram.objects.filter(author=user)
+        elif user.role == 'client':
+            return WorkoutProgram.objects.filter(client__user=user)
+        return WorkoutProgram.objects.all()
+
+class WorkoutViewSet(viewsets.ModelViewSet):
+    queryset = Workout.objects.all()
+    serializer_class = WorkoutSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class WorkoutExerciseViewSet(viewsets.ModelViewSet):
+    queryset = WorkoutExercise.objects.all()
+    serializer_class = WorkoutExerciseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    @action(detail=True, methods=['post'])
+    def add_set_result(self, request, pk=None):
+        workout_exercise = self.get_object()
+        set_number = request.data.get('set_number')
+        weight = request.data.get('weight')
+        reps = request.data.get('reps')
+        
+        set_result = SetResult.objects.create(
+            workout_exercise=workout_exercise,
+            set_number=set_number,
+            weight=weight,
+            reps=reps
+        )
+        return Response(SetResultSerializer(set_result).data)
