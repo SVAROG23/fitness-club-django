@@ -5,17 +5,14 @@
 {% block content %}
 <div class="card">
     <h1 class="card-title">👥 Список клиентов</h1>
-    <button onclick="location.href='/clients/add/'" class="btn">+ Добавить клиента</button>
 </div>
 
 <div class="card">
     <table>
         <thead>
-            <tr><th>ФИО</th><th>Телефон</th><th>Тренер</th><th>Дата регистрации</th><th>Действия</th></tr>
+            <tr><th>ID</th><th>Имя</th><th>Телефон</th><th>Тренер</th></tr>
         </thead>
-        <tbody id="clients-list">
-            <!-- Загружается через JS -->
-        </tbody>
+        <tbody id="clients-list"></tbody>
     </table>
 </div>
 
@@ -24,11 +21,10 @@
         const tbody = document.getElementById('clients-list');
         clients.forEach(client => {
             const row = tbody.insertRow();
-            row.insertCell(0).textContent = client.user?.first_name + ' ' + client.user?.last_name;
-            row.insertCell(1).textContent = client.user?.phone || '-';
-            row.insertCell(2).textContent = client.trainer_name || 'Не назначен';
-            row.insertCell(3).textContent = new Date(client.created_at).toLocaleDateString();
-            row.insertCell(4).innerHTML = `<a href="/clients/${client.id}/">Подробнее</a>`;
+            row.insertCell(0).textContent = client.id;
+            row.insertCell(1).textContent = client.user?.first_name + ' ' + client.user?.last_name;
+            row.insertCell(2).textContent = client.user?.phone || '-';
+            row.insertCell(3).textContent = client.trainer_name || '-';
         });
     });
 </script>
