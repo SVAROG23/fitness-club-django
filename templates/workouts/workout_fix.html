@@ -8,93 +8,13 @@
     <div id="workout-info"></div>
 </div>
 
-<div class="card">
-    <h2 class="card-title">Упражнения</h2>
-    <div id="exercises-container"></div>
-</div>
-
 <script>
     const workoutId = window.location.pathname.split('/').pop();
-    let currentExerciseIndex = 0;
-    let exercises = [];
-    
-    // Загрузка тренировки
     api.request(`/workouts/workouts/${workoutId}/`).then(workout => {
         document.getElementById('workout-info').innerHTML = `
             <h2>${workout.name}</h2>
             <p>Дата: ${workout.workout_date || 'Сегодня'}</p>
         `;
     });
-    
-    // Загрузка упражнений
-    api.request(`/workouts/workout-exercises/?workout=${workoutId}`).then(data => {
-        exercises = data;
-        renderCurrentExercise();
-    });
-    
-    function renderCurrentExercise() {
-        if (currentExerciseIndex >= exercises.length) {
-            document.getElementById('exercises-container').innerHTML = `
-                <div style="text-align: center; padding: 40px;">
-                    <h2>✅ Тренировка завершена!</h2>
-                    <button onclick="location.href='/workouts/'" class="btn">Вернуться к программам</button>
-                </div>
-            `;
-            return;
-        }
-        
-        const ex = exercises[currentExerciseIndex];
-        const container = document.getElementById('exercises-container');
-        container.innerHTML = `
-            <div style="text-align: center;">
-                <h3>${ex.exercise_name}</h3>
-                <p>План: ${ex.sets_planned} подходов × ${ex.reps_planned} повторений</p>
-                <p>Плановый вес: ${ex.weight_planned} кг</p>
-            </div>
-            <div id="sets-container"></div>
-            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
-                <button onclick="finishExercise()" class="btn">Завершить упражнение</button>
-                <button onclick="reportIssue()" style="background:#f44336;">Проблема</button>
-            </div>
-        `;
-        
-        // Форма для ввода результатов подходов
-        const setsContainer = document.getElementById('sets-container');
-        for (let i = 1; i <= ex.sets_planned; i++) {
-            setsContainer.innerHTML += `
-                <div style="margin: 10px 0; padding: 10px; border: 1px solid #eee;">
-                    <strong>Подход ${i}</strong><br>
-                    Вес: <input type="number" id="weight_${i}" step="2.5" placeholder="кг"><br>
-                    Повторения: <input type="number" id="reps_${i}" placeholder="раз">
-                </div>
-            `;
-        }
-        
-        // Сохраняем результаты
-        window.saveSetResults = () => {
-            for (let i = 1; i <= ex.sets_planned; i++) {
-                const weight = document.getElementById(`weight_${i}`).value;
-                const reps = document.getElementById(`reps_${i}`).value;
-                if (weight && reps) {
-                    api.addSetResult(ex.id, { set_number: i, weight, reps });
-                }
-            }
-        };
-    }
-    
-    function finishExercise() {
-        if (window.saveSetResults) window.saveSetResults();
-        currentExerciseIndex++;
-        renderCurrentExercise();
-    }
-    
-    function reportIssue() {
-        const reason = prompt('Укажите причину проблемы (травма, отказ от упражнения и т.д.):');
-        if (reason) {
-            showNotification('Проблема зафиксирована', 'warning');
-            // Здесь можно отправить на сервер
-        }
-        finishExercise();
-    }
 </script>
 {% endblock %}
