@@ -7,19 +7,9 @@
     <div id="program-info"></div>
 </div>
 
-<div class="card">
-    <h2 class="card-title">Тренировки в программе</h2>
-    <div id="workouts-list"></div>
-</div>
-
 <script>
     const programId = window.location.pathname.split('/').pop();
-    
-    // Загрузка информации о программе
-    Promise.all([
-        api.request(`/workouts/programs/${programId}/`),
-        api.request(`/workouts/workouts/?program=${programId}`)
-    ]).then(([program, workouts]) => {
+    api.request(`/workouts/programs/${programId}/`).then(program => {
         const infoDiv = document.getElementById('program-info');
         infoDiv.innerHTML = `
             <h1>${program.name}</h1>
@@ -27,15 +17,6 @@
             <p><strong>Клиент:</strong> ${program.client_name}</p>
             <p><strong>Автор:</strong> ${program.author_name}</p>
         `;
-        
-        const workoutsDiv = document.getElementById('workouts-list');
-        workoutsDiv.innerHTML = workouts.map(w => `
-            <div style="border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 8px;">
-                <h3>${w.name}</h3>
-                <p>Статус: ${w.status}</p>
-                <a href="/workouts/workout/${w.id}/">Провести тренировку</a>
-            </div>
-        `).join('');
     });
 </script>
 {% endblock %}
