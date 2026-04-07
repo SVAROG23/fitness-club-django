@@ -10,6 +10,7 @@ class AnthropometrySerializer(serializers.ModelSerializer):
 class ClientProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     user_id = serializers.IntegerField(write_only=True)
+    trainer_name = serializers.CharField(source='trainer.get_full_name', read_only=True)
     
     class Meta:
         model = ClientProfile
