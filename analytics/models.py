@@ -1,7 +1,6 @@
 from django.db import models
 from users.models import User
 from clients.models import ClientProfile
-from workouts.models import Workout
 
 class InjuryIncident(models.Model):
     client = models.ForeignKey(ClientProfile, on_delete=models.CASCADE, related_name='injuries')
