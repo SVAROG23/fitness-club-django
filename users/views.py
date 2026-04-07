@@ -9,12 +9,7 @@ from .serializers import UserSerializer, RegisterSerializer
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_permissions(self):
-        if self.action == 'create':
-            return [permissions.AllowAny()]
-        return super().get_permissions()
+    permission_classes = [permissions.AllowAny]
     
     @action(detail=False, methods=['post'])
     def register(self, request):
