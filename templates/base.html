@@ -1,1 +1,44 @@
-
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fitness Club{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">🏋️ Fitness Club</a>
+        <div class="navbar-menu">
+            {% if user.is_authenticated %}
+                {% if user.role == 'trainer' or user.role == 'manager' %}
+                    <a href="/clients/">Клиенты</a>
+                    <a href="/workouts/">Тренировки</a>
+                    <a href="/schedule/">Расписание</a>
+                    <a href="/reports/">Отчеты</a>
+                {% endif %}
+                {% if user.role == 'client' %}
+                    <a href="/my-workouts/">Мои тренировки</a>
+                    <a href="/my-progress/">Мой прогресс</a>
+                    <a href="/schedule/">Расписание</a>
+                {% endif %}
+                <a href="/profile/">Профиль</a>
+                <a href="/logout/">Выйти</a>
+            {% else %}
+                <a href="/login/">Вход</a>
+                <a href="/register/">Регистрация</a>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
