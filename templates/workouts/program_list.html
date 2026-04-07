@@ -1,1 +1,33 @@
+{% extends 'base.html' %}
 
+{% block title %}Программы тренировок - Fitness Club{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 class="card-title">💪 Программы тренировок</h1>
+    <button onclick="location.href='/workouts/program/create/'" class="btn">+ Создать программу</button>
+</div>
+
+<div class="card">
+    <div id="programs-container"></div>
+</div>
+
+<script>
+    api.getPrograms().then(programs => {
+        const container = document.getElementById('programs-container');
+        if (programs.length === 0) {
+            container.innerHTML = '<p>Нет созданных программ</p>';
+            return;
+        }
+        container.innerHTML = programs.map(p => `
+            <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px;">
+                <h3>${p.name}</h3>
+                <p>Клиент: ${p.client_name}</p>
+                <p>Автор: ${p.author_name}</p>
+                <p>Статус: ${p.is_active ? 'Активна' : 'Завершена'}</p>
+                <a href="/workouts/program/${p.id}/">Подробнее</a>
+            </div>
+        `).join('');
+    });
+</script>
+{% endblock %}
