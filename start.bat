@@ -1,6 +1,38 @@
 @echo off
-echo Starting Fitness Club Django Server...
-py manage.py makemigrations
-py manage.py migrate
-py manage.py runserver
+echo ========================================
+echo   Fitness Club Django Server
+echo ========================================
+echo.
+
+where py >nul 2>nul
+if %errorlevel%==0 (
+    set PYTHON_CMD=py
+) else (
+    set PYTHON_CMD=python
+)
+
+echo [1/3] Checking and installing requirements...
+%PYTHON_CMD% -m pip install --upgrade pip
+%PYTHON_CMD% -m pip install django djangorestframework django-cors-headers psycopg2-binary Pillow
+
+echo.
+echo [2/3] Making migrations...
+%PYTHON_CMD% manage.py makemigrations users
+%PYTHON_CMD% manage.py makemigrations clients
+%PYTHON_CMD% manage.py makemigrations workouts
+%PYTHON_CMD% manage.py makemigrations schedule
+%PYTHON_CMD% manage.py makemigrations analytics
+%PYTHON_CMD% manage.py migrate
+
+echo.
+echo [3/3] Starting server...
+echo.
+echo ========================================
+echo   Server started at: http://127.0.0.1:8000
+echo   Press Ctrl+C to stop
+echo ========================================
+echo.
+
+%PYTHON_CMD% manage.py runserver
+
 pause
