@@ -1,16 +1,59 @@
 {% extends 'base.html' %}
+
+{% block title %}Отчеты - Fitness Club{% endblock %}
+
 {% block content %}
-<h1>Отчеты</h1>
-<p>Здесь будут отображены аналитические отчеты.</p>
-{% if trainer_load %}
-<h3>Загрузка тренеров</h3>
-<ul>
-    {% for t in trainer_load %}
-    <li>{{ t.name }}: {{ t.total }} тренировок</li>
-    {% endfor %}
-</ul>
-{% endif %}
-{% if clients_total %}
-<p>Всего клиентов: {{ clients_total }}</p>
-{% endif %}
+<div class="card">
+    <h1 class="card-title">📊 Отчеты и аналитика</h1>
+</div>
+
+<div class="card">
+    <h2 class="card-title">Загрузка тренеров</h2>
+    <canvas id="trainerLoadChart" width="400" height="200"></canvas>
+</div>
+
+<div class="card">
+    <h2 class="card-title">Мой прогресс</h2>
+    <canvas id="progressChart" width="400" height="200"></canvas>
+</div>
+
+<div class="card">
+    <h2 class="card-title">Статистика травматизма</h2>
+    <canvas id="injuryChart" width="400" height="200"></canvas>
+</div>
+
+<script>
+    // Загрузка данных о загрузке тренеров
+    api.getTrainerLoad().then(data => {
+        const ctx = document.getElementById('trainerLoadChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.trainer_name),
+                datasets: [{
+                    label: 'Количество записей',
+                    data: data.map(d => d.bookings_count),
+                    backgroundColor: '#667eea'
+                }]
+            }
+        });
+    });
+    
+    // Загрузка прогресса клиента
+    api.getClientProgress().then(data => {
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(d => d.date),
+                datasets: [{
+                    label: 'Вес (кг)',
+                    data: data.map(d => d.weight),
+                    borderColor: '#764ba2',
+                    fill: true
+                }]
+            }
+        });
+    });
+</script>
 {% endblock %}
