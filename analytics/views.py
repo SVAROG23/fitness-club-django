@@ -1,34 +1,31 @@
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.db.models import Count, Sum, Q
-from django.utils import timezone
-from datetime import timedelta
+from django.db.models import Count
 from .models import InjuryIncident
 from .serializers import InjuryIncidentSerializer
-from workouts.models import Workout
 from schedule.models import Booking
+from users.models import User
 
 class InjuryIncidentViewSet(viewsets.ModelViewSet):
     queryset = InjuryIncident.objects.all()
     serializer_class = InjuryIncidentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     
     def get_queryset(self):
         user = self.request.user
-        if user.role == 'trainer':
+        if user.is_authenticated and user.role == 'trainer':
             return InjuryIncident.objects.filter(trainer=user)
-        elif user.role == 'client':
+        elif user.is_authenticated and user.role == 'client':
             return InjuryIncident.objects.filter(client__user=user)
         return InjuryIncident.objects.all()
 
 class AnalyticsViewSet(viewsets.ViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     
     @action(detail=False, methods=['get'])
     def trainer_load(self, request):
         """Загрузка тренеров"""
-        from users.models import User
         trainers = User.objects.filter(role='trainer')
         result = []
         for trainer in trainers:
@@ -44,7 +41,7 @@ class AnalyticsViewSet(viewsets.ViewSet):
     def client_progress(self, request):
         """Прогресс клиента"""
         user = request.user
-        if user.role == 'client':
+        if user.is_authenticated and user.role == 'client':
             from clients.models import Anthropometry
             anthropometry = Anthropometry.objects.filter(client__user=user).order_by('date')
             data = [{'date': a.date, 'weight': float(a.weight)} for a in anthropometry]
