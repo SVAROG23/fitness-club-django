@@ -1,40 +1,35 @@
 @echo off
-title Фитнес-центр «Медведь»
-color 0A
-
-echo ========================================
-echo    Фитнес-центр «Медведь»
-echo    Запуск сервера...
-echo ========================================
+title Fitness Club Server
+echo Starting Fitness Club Server...
 echo.
 
-cd /d "C:\Users\user\Desktop\ВКР\fitness-club-django"
+REM Активируем виртуальное окружение (если оно есть)
+if exist venv\Scripts\activate (
+    call venv\Scripts\activate
+)
 
-echo [1/5] Активация виртуального окружения...
-call venv\Scripts\activate.bat
+REM Проверяем и устанавливаем зависимости
+pip install -r requirements.txt > nul 2>&1
+echo Dependencies checked.
 
-echo [2/5] Создание миграций...
-py -3.12 manage.py makemigrations --noinput
+REM Применяем миграции базы данных
+python manage.py makemigrations > nul 2>&1
+python manage.py migrate > nul 2>&1
+echo Database migrated.
 
-echo [3/5] Применение миграций...
-py -3.12 manage.py migrate --noinput
+REM Создаем суперпользователя (если не создан)
+python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='admin').exists() or User.objects.create_superuser('admin', 'admin@example.com', 'admin123')" > nul 2>&1
+echo Admin user: admin / admin123
 
-echo [4/5] Создание суперпользователя (если не существует)...
-echo from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='admin').exists() or User.objects.create_superuser('admin', 'admin@example.com', 'admin123') | py -3.12 manage.py shell
-
-echo [5/5] Запуск сервера...
+REM Запускаем сервер
 echo.
 echo ========================================
-echo    СЕРВЕР ЗАПУЩЕН!
-echo    Откройте браузер: http://127.0.0.1:8000
-echo    Админ-панель: http://127.0.0.1:8000/admin
-echo    Логин: admin  Пароль: admin123
+echo Server is starting...
+echo Open in browser: http://127.0.0.1:8000
+echo Admin panel: http://127.0.0.1:8000/admin
+echo Login: admin / admin123
 echo ========================================
 echo.
-echo Для остановки сервера закройте это окно
-echo ========================================
-echo.
-
-py -3.12 manage.py runserver
+python manage.py runserver
 
 pause
