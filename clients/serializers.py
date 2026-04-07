@@ -1,7 +1,16 @@
 from rest_framework import serializers
-from .models import ClientProfile
+from users.serializers import UserSerializer
+from .models import ClientProfile, Anthropometry
+
+class AnthropometrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Anthropometry
+        fields = '__all__'
 
 class ClientProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    user_id = serializers.IntegerField(write_only=True)
+    
     class Meta:
         model = ClientProfile
-        fields = ['id', 'user', 'trainer', 'birth_date', 'gender', 'height', 'goals', 'medical_restrictions']
+        fields = '__all__'
