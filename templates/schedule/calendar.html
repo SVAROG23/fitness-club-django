@@ -5,72 +5,26 @@
 {% block content %}
 <div class="card">
     <h1 class="card-title">📅 Расписание тренировок</h1>
-    <button onclick="showBookingForm()" class="btn">+ Записать клиента</button>
 </div>
 
 <div class="card">
-    <h2 class="card-title">Тренировки на неделю</h2>
     <div id="calendar-view"></div>
 </div>
 
-<div id="booking-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:12px; z-index:1000; width:400px;">
-    <h3>Запись на тренировку</h3>
-    <form id="booking-form">
-        <div class="form-group">
-            <label>Клиент</label>
-            <select id="client_id" required></select>
-        </div>
-        <div class="form-group">
-            <label>Тренер</label>
-            <select id="trainer_id" required></select>
-        </div>
-        <div class="form-group">
-            <label>Дата и время</label>
-            <input type="datetime-local" id="start_time" required>
-        </div>
-        <button type="submit">Сохранить</button>
-        <button type="button" onclick="closeModal()">Отмена</button>
-    </form>
-</div>
-
 <script>
-    // Загрузка расписания
     api.getBookings().then(bookings => {
         const container = document.getElementById('calendar-view');
+        if (bookings.length === 0) {
+            container.innerHTML = '<p>Нет записей</p>';
+            return;
+        }
         container.innerHTML = bookings.map(b => `
-            <div style="border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 8px;">
+            <div style="border:1px solid #ddd; padding:10px; margin:10px 0; border-radius:8px;">
                 <strong>${b.client_name}</strong> - ${b.trainer_name}<br>
-                📅 ${formatDate(b.start_time)}<br>
+                Дата: ${formatDate(b.start_time)}<br>
                 Статус: ${b.status}
             </div>
         `).join('');
-    });
-    
-    function showBookingForm() {
-        document.getElementById('booking-modal').style.display = 'block';
-        // Загрузка списка клиентов и тренеров
-        api.getClients().then(clients => {
-            const select = document.getElementById('client_id');
-            select.innerHTML = clients.map(c => `<option value="${c.id}">${c.user?.first_name} ${c.user?.last_name}</option>`).join('');
-        });
-    }
-    
-    function closeModal() {
-        document.getElementById('booking-modal').style.display = 'none';
-    }
-    
-    document.getElementById('booking-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const data = {
-            client_id: document.getElementById('client_id').value,
-            trainer_id: document.getElementById('trainer_id').value,
-            start_time: document.getElementById('start_time').value,
-            end_time: new Date(new Date(document.getElementById('start_time').value).getTime() + 3600000).toISOString()
-        };
-        await api.createBooking(data);
-        showNotification('Запись создана');
-        closeModal();
-        location.reload();
     });
 </script>
 {% endblock %}
