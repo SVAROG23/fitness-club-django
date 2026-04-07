@@ -1,6 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+class Role(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    
+    def __str__(self):
+        return self.name
+
 class User(AbstractUser):
     ROLE_CHOICES = (
         ('admin', 'Администратор'),
@@ -8,18 +14,9 @@ class User(AbstractUser):
         ('client', 'Клиент'),
         ('manager', 'Руководитель'),
     )
-    role = models.CharField('Роль', max_length=20, choices=ROLE_CHOICES, default='client')
-    phone = models.CharField('Телефон', max_length=20, blank=True)
-    avatar = models.ImageField('Аватар', upload_to='avatars/', blank=True, null=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='client')
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     
     def __str__(self):
-        return f"{self.get_full_name() or self.username} ({self.get_role_display()})"
-    
-    def is_trainer(self):
-        return self.role == 'trainer'
-    
-    def is_client(self):
-        return self.role == 'client'
-    
-    def is_manager(self):
-        return self.role == 'manager'
+        return f"{self.get_full_name()} ({self.get_role_display()})"
