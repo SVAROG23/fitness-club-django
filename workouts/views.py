@@ -7,35 +7,35 @@ from .serializers import MuscleGroupSerializer, ExerciseSerializer, WorkoutProgr
 class MuscleGroupViewSet(viewsets.ModelViewSet):
     queryset = MuscleGroup.objects.all()
     serializer_class = MuscleGroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 class ExerciseViewSet(viewsets.ModelViewSet):
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 class WorkoutProgramViewSet(viewsets.ModelViewSet):
     queryset = WorkoutProgram.objects.all()
     serializer_class = WorkoutProgramSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     
     def get_queryset(self):
         user = self.request.user
-        if user.role == 'trainer':
+        if user.is_authenticated and user.role == 'trainer':
             return WorkoutProgram.objects.filter(author=user)
-        elif user.role == 'client':
+        elif user.is_authenticated and user.role == 'client':
             return WorkoutProgram.objects.filter(client__user=user)
         return WorkoutProgram.objects.all()
 
 class WorkoutViewSet(viewsets.ModelViewSet):
     queryset = Workout.objects.all()
     serializer_class = WorkoutSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 class WorkoutExerciseViewSet(viewsets.ModelViewSet):
     queryset = WorkoutExercise.objects.all()
     serializer_class = WorkoutExerciseSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     
     @action(detail=True, methods=['post'])
     def add_set_result(self, request, pk=None):
