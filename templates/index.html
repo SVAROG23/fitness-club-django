@@ -5,27 +5,18 @@
 {% block content %}
 <div class="card">
     <h1 class="card-title">Добро пожаловать в Fitness Club!</h1>
-    <p>Система управления тренировочным процессом для фитнес-центра "Медведь"</p>
+    <p>Система управления тренировочным процессом для фитнес-центра</p>
 </div>
 
 <div class="card">
-    <h2 class="card-title">Быстрый доступ</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-        <a href="/schedule/" style="text-decoration: none;">
-            <div style="background: #667eea; color: white; padding: 20px; border-radius: 12px; text-align: center;">
-                📅 Расписание тренировок
-            </div>
-        </a>
-        <a href="/workouts/" style="text-decoration: none;">
-            <div style="background: #764ba2; color: white; padding: 20px; border-radius: 12px; text-align: center;">
-                💪 Программы тренировок
-            </div>
-        </a>
-        <a href="/reports/" style="text-decoration: none;">
-            <div style="background: #4caf50; color: white; padding: 20px; border-radius: 12px; text-align: center;">
-                📊 Отчеты и аналитика
-            </div>
-        </a>
-    </div>
+    <h2 class="card-title">API Endpoints</h2>
+    <ul>
+        <li><a href="/api/users/">/api/users/</a> - Пользователи</li>
+        <li><a href="/api/clients/profiles/">/api/clients/profiles/</a> - Клиенты</li>
+        <li><a href="/api/workouts/programs/">/api/workouts/programs/</a> - Программы тренировок</li>
+        <li><a href="/api/workouts/workouts/">/api/workouts/workouts/</a> - Тренировки</li>
+        <li><a href="/api/schedule/bookings/">/api/schedule/bookings/</a> - Записи</li>
+        <li><a href="/api/analytics/trainer_load/">/api/analytics/trainer_load/</a> - Загрузка тренеров</li>
+    </ul>
 </div>
 {% endblock %}
