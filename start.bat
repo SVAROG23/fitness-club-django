@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 echo ========================================
 echo   Fitness Club Django Server
 echo ========================================
@@ -11,9 +12,8 @@ if %errorlevel%==0 (
     set PYTHON_CMD=python
 )
 
-echo [1/3] Checking and installing requirements...
-%PYTHON_CMD% -m pip install --upgrade pip
-%PYTHON_CMD% -m pip install django djangorestframework django-cors-headers psycopg2-binary Pillow
+echo [1/3] Installing requirements...
+%PYTHON_CMD% -m pip install django djangorestframework django-cors-headers
 
 echo.
 echo [2/3] Making migrations...
@@ -29,6 +29,7 @@ echo [3/3] Starting server...
 echo.
 echo ========================================
 echo   Server started at: http://127.0.0.1:8000
+echo   Admin panel: http://127.0.0.1:8000/admin
 echo   Press Ctrl+C to stop
 echo ========================================
 echo.
