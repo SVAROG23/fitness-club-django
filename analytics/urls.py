@@ -1,6 +1,11 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import InjuryIncidentViewSet, AnalyticsViewSet
+
+router = DefaultRouter()
+router.register(r'injuries', InjuryIncidentViewSet)
+router.register(r'', AnalyticsViewSet, basename='analytics')
 
 urlpatterns = [
-    path('reports/', views.reports_view, name='reports'),
+    path('', include(router.urls)),
 ]
